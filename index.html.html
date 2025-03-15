@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Research Survey Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 8px;
+        }
+        
+        h1, h2, h3 {
+            margin-bottom: 15px;
+        }
+        
+        section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        #generate-btn {
+            background-color: #2ecc71;
+        }
+        
+        #generate-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        #clear-btn {
+            background-color: #e74c3c;
+        }
+        
+        #clear-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .tab-btn {
+            background-color: #f0f0f0;
+            color: #333;
+            flex: 1;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .tab-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 0 0 4px 4px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .template-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .template-btn {
+            background-color: #9b59b6;
+            text-align: left;
+        }
+        
+        .template-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        #survey-preview {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 15px;
+            min-height: 300px;
+            background-color: white;
+        }
+        
+        #survey-link-container {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+        
+        .survey-link {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        /* Survey Styling */
+        .survey-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .question-container {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .radio-option, .checkbox-option {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .radio-option label, .checkbox-option label {
+            margin-left: 8px;
+        }
+        
+        .grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .grid-table th, .grid-table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .scale-container {
+            margin-top: 15px;
+        }
+        
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .scale-options {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .scale-option {
+            text-align: center;
+        }
+        
+        .survey-submit-btn {
+            padding: 12px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        
+        .instruction-text {
+            margin-bottom: 15px;
+            color: #666;
+        }
+        
+        #status-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Required field styling */
+        .required-field::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        .field-error {
+            border: 2px solid #e74c3c !important;
+            background-color: #ffeaea;
+        }
+        
+        /* Highlight settings section */
+        #settings-section {
+            border: 2px solid #3498db;
+            background-color: #f7fbfe;
+        }
+        
+        .setting-row {
+            margin-bottom: 15px;
+        }
+        
+        .setting-row label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        /* Section heading styling */
+        .section-heading {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Market Research Survey Generator</h1>
+        <p>Create professional surveys with natural language prompts</p>
+    </header>
+    
+    <main>
+        <!-- Settings section moved up and highlighted -->
+        <section id="settings-section">
+            <h2>Survey Settings</h2>
+            <p class="instruction-text">Enter your brand information below. Brand name is required before generating a survey.</p>
+            <div class="setting-row">
+                <label for="brand-name" class="required-field">Brand Name:</label>
+                <input type="text" id="brand-name" placeholder="Enter your brand name (required)" required>
+            </div>
+            <div class="setting-row">
+                <label for="category-name">Product/Service Category:</label>
+                <input type="text" id="category-name" placeholder="Enter your product/service category">
+            </div>
+        </section>
+        
+        <section id="prompt-section">
+            <h2>Design Your Survey</h2>
+            <p class="instruction-text">Describe the survey you want to create using natural language. Include specific question types or select from templates below.</p>
+            <p class="instruction-text"><strong>Pro tip:</strong> Include keywords like "demographics", "age", "gender", or "income" to add demographic questions to your survey.</p>
+            <textarea id="prompt-input" placeholder="Example: I need a brand tracking survey that measures awareness, consideration, and brand perception for my company. Please include demographics questions for age, gender, and income."></textarea>
+            <div class="controls">
+                <button id="generate-btn">Generate Survey</button>
+                <button id="clear-btn">Clear All</button>
+            </div>
+            <div id="status-message"></div>
+        </section>
+        
+        <section id="template-section">
+            <h2>Brand Tracking Templates</h2>
+            <p class="instruction-text">Click on any template to add standard market research questions to your survey.</p>
+            <div class="template-list">
+                <button class="template-btn" data-template="awareness">Brand Awareness</button>
+                <button class="template-btn" data-template="consideration">Brand Consideration</button>
+                <button class="template-btn" data-template="purchase">Purchase Intent</button>
+                <button class="template-btn" data-template="perception">Brand Perception/Image</button>
+                <button class="template-btn" data-template="worth">Brand Worth/Value</button>
+                <button class="template-btn" data-template="price">Price Perception</button>
+                <button class="template-btn" data-template="satisfaction">Customer Satisfaction</button>
+                <button class="template-btn" data-template="nps">Net Promoter Score (NPS)</button>
+                <button class="template-btn" data-template="demographics">Demographics</button>
+                <button class="template-btn" data-template="full">Complete Brand Tracker</button>
+            </div>
+        </section>
+        
+        <section id="output-section">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="preview">Survey Preview</button>
+                <button class="tab-btn" data-tab="dimensions">Dimensions Syntax</button>
+            </div>
+            
+            <div id="preview-output" class="tab-content active">
+                <div id="survey-preview"></div>
+                <button id="survey-link-btn">Generate Survey Link</button>
+                <div id="survey-link-container"></div>
+            </div>
+            
+            <div id="dimensions-output" class="tab-content">
+                <pre id="dimensions-code"></pre>
+                <button id="copy-btn">Copy to Clipboard</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Global state variables
+        let brandName = "Your Brand";
+        let categoryName = "your product category";
+        let currentSurvey = {
+            title: "Market Research Survey",
+            questions: []
+        };
+        
+        // Brand Tracking Templates
+        const templates = {
+            awareness: {
+                name: "Brand Awareness",
+                questions: [
+                    {
+                        type: "text",
+                        text: "When thinking about [category], which brands come to mind? Please list all the brands you can think of.",
+                        id: "unaided_awareness"
+                    },
+                    {
+                        type: "multiple",
+                        text: "Which of the following [category] brands have you heard of? Select all that apply.",
+                        id: "aided_awareness",
+                        options: ["[brand]", "Competitor A", "Competitor B", "Competitor C", "Competitor D", "None of these"]
+                    }
+                ]
+            },
+            consideration: {
+                name: "Brand Consideration",
+                questions: [
+                    {
+                        type: "multiple",
+                        text: "Which of these [category] brands would you consider purchasing in the future? Select all that apply.",
+                        id: "brand_consideration",
+                        options: ["[brand]", "Competitor A", "Competitor B", "Competitor C", "Competitor D", "None of these"]
+                    },
+                    {
+                        type: "single",
+                        text: "If you were to purchase a [category] product today, which brand would be your first choice?",
+                        id: "first_choice",
+                        options: ["[brand]", "Competitor A", "Competitor B", "Competitor C", "Competitor D", "Other"]
+                    }
+                ]
+            },
+            purchase: {
+                name: "Purchase Intent",
+                questions: [
+                    {
+                        type: "single",
+                        text: "How likely are you to purchase [brand] products in the next 3 months?",
+                        id: "purchase_intent",
+                        options: ["Definitely will not", "Probably will not", "Might or might not", "Probably will", "Definitely will"]
+                    },
+                    {
+                        type: "single",
+                        text: "When did you last purchase a [category] product?",
+                        id: "last_purchase",
+                        options: ["Within the last week", "Within the last month", "Within the last 3 months", "Within the last 6 months", "Within the last year", "More than a year ago", "Never"]
+                    }
+                ]
+            },
+            perception: {
+                name: "Brand Perception/Image",
+                questions: [
+                    {
+                        type: "grid",
+                        text: "Please rate how well each attribute describes [brand]:",
+                        id: "brand_perception",
+                        rows: ["Innovative", "Trustworthy", "High quality", "Good value for money", "Unique", "Modern", "Reliable"],
+                        columns: ["Not at all", "Slightly", "Moderately", "Very much", "Extremely"]
+                    },
+                    {
+                        type: "text",
+                        text: "In your own words, how would you describe [brand]?",
+                        id: "brand_description"
+                    }
+                ]
+            },
+            worth: {
+                name: "Brand Worth/Value",
+                questions: [
+                    {
+                        type: "single",
+                        text: "How would you rate the overall value that [brand] provides?",
+                        id: "brand_worth",
+                        options: ["Poor value", "Below average value", "Average value", "Good value", "Excellent value"]
+                    },
+                    {
+                        type: "single",
+                        text: "Compared to other [category] brands, how would you rate [brand]'s overall quality?",
+                        id: "comparative_quality",
+                        options: ["Much worse", "Somewhat worse", "About the same", "Somewhat better", "Much better"]
+                    }
+                ]
+            },
+            price: {
+                name: "Price Perception",
+                questions: [
+                    {
+                        type: "single",
+                        text: "How would you rate [brand]'s pricing compared to similar [category] products?",
+                        id: "price_perception",
+                        options: ["Much too expensive", "Somewhat expensive", "Fairly priced", "Somewhat inexpensive", "Very inexpensive"]
+                    },
+                    {
+                        type: "single",
+                        text: "To what extent do you agree with the statement: '[brand] products are worth what they cost'?",
+                        id: "price_value",
+                        options: ["Strongly disagree", "Somewhat disagree", "Neither agree nor disagree", "Somewhat agree", "Strongly agree"]
+                    }
+                ]
+            },
+            satisfaction: {
+                name: "Customer Satisfaction",
+                questions: [
+                    {
+                        type: "single",
+                        text: "Overall, how satisfied are you with [brand]?",
+                        id: "customer_satisfaction",
+                        options: ["Very dissatisfied", "Somewhat dissatisfied", "Neither satisfied nor dissatisfied", "Somewhat satisfied", "Very satisfied"]
+                    },
+                    {
+                        type: "multiple",
+                        text: "Which aspects of [brand] are you most satisfied with? Select all that apply.",
+                        id: "satisfaction_aspects",
+                        options: ["Product quality", "Value for money", "Customer service", "Product design", "Reliability", "Innovation", "None of these"]
+                    }
+                ]
+            },
+            nps: {
+                name: "Net Promoter Score",
+                questions: [
+                    {
+                        type: "scale",
+                        text: "How likely are you to recommend [brand] to a friend or colleague?",
+                        id: "nps",
+                        min: 0,
+                        max: 10,
+                        minLabel: "Not at all likely",
+                        maxLabel: "Extremely likely"
+                    },
+                    {
+                        type: "text",
+                        text: "What is the main reason for your score?",
+                        id: "nps_reason"
+                    }
+                ]
+            },
+            demographics: {
+                name: "Demographics",
+                questions: [
+                    {
+                        type: "section",
+                        text: "About You",
+                        id: "demographics_section"
+                    },
+                    {
+                        type: "single",
+                        text: "What is your age group?",
+                        id: "age_group",
+                        options: ["Under 18", "18-24", "25-34", "35-44", "45-54", "55-64", "65 or older", "Prefer not to say"]
+                    },
+                    {
+                        type: "single",
+                        text: "What gender do you identify as?",
+                        id: "gender",
+                        options: ["Male", "Female", "Non-binary / third gender", "Prefer to self-describe", "Prefer not to say"]
+                    },
+                    {
+                        type: "single",
+                        text: "What is your annual household income?",
+                        id: "income",
+                        options: ["Less than $25,000", "$25,000 - $49,999", "$50,000 - $74,999", "$75,000 - $99,999", "$100,000 - $149,999", "$150,000 or more", "Prefer not to say"]
+                    },
+                    {
+                        type: "single",
+                        text: "What is your highest level of education completed?",
+                        id: "education",
+                        options: ["Less than high school", "High school graduate", "Some college", "Associate's degree", "Bachelor's degree", "Master's degree", "Professional degree", "Doctorate", "Prefer not to say"]
+                    },
+                    {
+                        type: "single",
+                        text: "What is your current employment status?",
+                        id: "employment",
+                        options: ["Employed full-time", "Employed part-time", "Self-employed", "Unemployed", "Student", "Retired", "Homemaker", "Unable to work", "Prefer not to say"]
+                    }
+                ]
+            }
+        };
+        
+        // Function to validate brand name field
+        function validateBrandName() {
+            const brandNameInput = document.getElementById('brand-name');
+            if (!brandNameInput || !brandNameInput.value.trim()) {
+                showStatus("Please enter your brand name before continuing", true);
+                brandNameInput.classList.add('field-error');
+                brandNameInput.focus();
+                return false;
+            }
+            
+            brandNameInput.classList.remove('field-error');
+            return true;
+        }
+        
+        // Function to show status messages
+        function showStatus(message, isError = false) {
+            const statusMessage = document.getElementById('status-message');
+            if (statusMessage) {
+                statusMessage.textContent = message;
+                statusMessage.className = isError ? 'error' : 'success';
+                statusMessage.style.display = 'block';
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        // Update brand name from input
+        function updateBrandName() {
+            const brandNameInput = document.getElementById('brand-name');
+            if (brandNameInput) {
+                brandName = brandNameInput.value.trim() || "Your Brand";
+                updateOutputs();
+            }
+        }
+        
+        // Update category name from input
+        function updateCategoryName() {
+            const categoryNameInput = document.getElementById('category-name');
+            if (categoryNameInput) {
+                categoryName = categoryNameInput.value.trim() || "your product category";
+                updateOutputs();
+            }
+        }
+        
+        // Extract title from prompt
+        function extractTitle(prompt) {
+            // Simple title extraction
+            if (prompt.toLowerCase().includes("survey for")) {
+                const match = prompt.match(/survey for (.*?)($|\.|,)/i);
+                if (match && match[1]) {
+                    return match[1].trim() + " Survey";
+                }
+            }
+            
+            if (prompt.toLowerCase().includes("tracking")) {
+                return "Brand Tracking Survey";
+            }
+            
+            // Default title
+            return "Market Research Survey";
+        }
+        
+        // Generate survey from prompt input
+        function generateSurvey() {
+            try {
+                // Validate brand name first
+                if (!validateBrandName()) {
+                    return;
+                }
+                
+                const promptInput = document.getElementById('prompt-input');
+                if (!promptInput) {
+                    throw new Error("Prompt input not found");
+                }
+                
+                const prompt = promptInput.value.trim();
+                
+                if (!prompt) {
+                    alert("Please enter a description of the survey you want to create.");
+                    return;
+                }
+                
+                const keywords = prompt.toLowerCase();
+                currentSurvey = {
+                    title: extractTitle(prompt),
+                    questions: []
+                };
+                
+                // Add demographics questions if relevant keywords are found
+                const hasDemographics = keywords.includes("demographic") || 
+                                        keywords.includes("age") || 
+                                        keywords.includes("gender") || 
+                                        keywords.includes("income") ||
+                                        keywords.includes("education") ||
+                                        keywords.includes("employment");
+                
+                if (hasDemographics) {
+                    // Create a filtered set of demographic questions based on keywords
+                    const demographicQuestions = templates.demographics.questions.filter(q => {
+                        if (q.type === "section") return true;
+                        if (q.id === "age_group" && keywords.includes("age")) return true;
+                        if (q.id === "gender" && keywords.includes("gender")) return true;
+                        if (q.id === "income" && keywords.includes("income")) return true;
+                        if (q.id === "education" && keywords.includes("education")) return true;
+                        if (q.id === "employment" && keywords.includes("employment")) return true;
+                        
+                        // If "demographics" is mentioned, include all demographic questions
+                        if (keywords.includes("demographic") && 
+                            (q.id === "age_group" || q.id === "gender" || q.id === "income" || 
+                             q.id === "education" || q.id === "employment")) {
+                            return true;
+                        }
+                        
+                        return false;
+                    });
+                    
+                    currentSurvey.questions.push(...JSON.parse(JSON.stringify(demographicQuestions)));
+                }
+                
+                // Check for specific question types in the prompt
+                if (keywords.includes("awareness") || keywords.includes("heard of") || keywords.includes("know about")) {
+                    currentSurvey.questions.push(...JSON.parse(JSON.stringify(templates.awareness.questions)));
+                }
+                
+                if (keywords.includes("consideration") || keywords.includes("consider using") || 
+                    keywords.includes("consider purchasing") || keywords.includes("first choice")) {
+                    currentSurvey.questions.push(...JSON.parse(JSON.stringify(templates.consideration.questions)));
+                }
+                
+                if (keywords.includes("purchase intent") || keywords.includes("likely to buy") || 
+                    keywords.includes("purchase in future") || keywords.includes("buying")) {
+                    currentSurvey.questions.push(...JSON.parse(JSON.stringify(templates.purchase.questions)));
+                }
+                
+                if (keywords.includes("perception") || keywords.includes("image") || 
+                    keywords.includes("attribute") || keywords.includes("describe brand")) {
+                    currentSurvey.questions.push(...JSON.parse(JSON.stringify(templates.perception.questions)));
+                }
+                
+                if (keywords.includes("worth") || keywords.includes("value") || keywords.includes("quality")) {
+                    currentSurvey.questions.push(...JSON.parse(JSON.stringify(templates.worth.questions)));
+                }
+                
+                if (keywords.includes("price") || keywords.includes("pricing") || 
+                    keywords.includes("cost") || keywords.includes("expensive")) {
+                    currentSurvey.questions.push(...JSON.parse(JSON.stringify(templates.price.questions)));
+                }
+                
+                if (keywords.includes("satisfaction") || keywords.includes("satisfied") || 
+                    keywords.includes("happy with")) {
+                    currentSurvey.questions.push(...JSON.parse(JSON.stringify(templates.satisfaction.questions)));
+                }
+                
+                if (keywords.includes("nps") || keywords.includes("net promoter") || 
+                    keywords.includes("recommend") || keywords.includes("referral")) {
+                    currentSurvey.questions.push(...JSON.parse(JSON.stringify(templates.nps.questions)));
+                }
+                
+                // If no specific questions were identified, use the full brand tracker
+                if (currentSurvey.questions.length === 0) {
+                    // Create full template if it doesn't exist
+                    if (!templates.full) {
+                        templates.full = {
+                            name: "Complete Brand Tracker",
+                            questions: []
+                        };
+                        
+                        // Add all questions to full template
+                        Object.keys(templates).forEach(key => {
+                            if (key !== 'full') {
+                                templates.full.questions = templates.full.questions.concat(
+                                    JSON.parse(JSON.stringify(templates[key].questions))
+                                );
+                            }
+                        });
+                    }
+                    
+                    currentSurvey.questions = JSON.parse(JSON.stringify(templates.full.questions));
+                }
+                
+                updateOutputs();
+                showStatus("Survey generated successfully!");
+            } catch (err) {
+                console.error("Error generating survey:", err);
+                showStatus("Error generating survey: " + err.message, true);
+            }
+        }
+        
+        // Apply template when a template button is clicked
+        function applyTemplate(templateName) {
+            try {
+                // Validate brand name first
+                if (!validateBrandName()) {
+                    return;
+                }
+                
+                const template = templates[templateName];
+                
+                if (template) {
+                    const promptInput = document.getElementById('prompt-input');
+                    if (promptInput) promptInput.value = `I need a survey for ${template.name}`;
+                    
+                    currentSurvey = {
+                        title: template.name + " Survey",
+                        questions: JSON.parse(JSON.stringify(template.questions)) // Deep copy
+                    };
+                    
+                    updateOutputs();
+                    showStatus(`${template.name} template loaded successfully!`);
+                }
+            } catch (err) {
+                console.error("Error applying template:", err);
+                showStatus("Error applying template: " + err.message, true);
+            }
+        }
+        
+        // Clear all fields
+        function clearAll() {
+            try {
+                const promptInput = document.getElementById('prompt-input');
+                const dimensionsCode = document.getElementById('dimensions-code');
+                const surveyPreview = document.getElementById('survey-preview');
+                const surveyLinkContainer = document.getElementById('survey-link-container');
+                const brandNameInput = document.getElementById('brand-name');
+                const categoryNameInput = document.getElementById('category-name');
+                
+                if (promptInput) promptInput.value = "";
+                if (dimensionsCode) dimensionsCode.textContent = "";
+                if (surveyPreview) surveyPreview.innerHTML = "";
+                if (surveyLinkContainer) surveyLinkContainer.innerHTML = "";
+                if (brandNameInput) brandNameInput.value = "";
+                if (categoryNameInput) categoryNameInput.value = "";
+                
+                brandName = "Your Brand";
+                categoryName = "your product category";
+                currentSurvey = { title: "", questions: [] };
+                
+                showStatus("All fields cleared");
+            } catch (err) {
+                console.error("Error clearing fields:", err);
+                showStatus("Error clearing fields: " + err.message, true);
+            }
+        }
+        
+        // Switch between tabs
+        function switchTab(tabName) {
+            try {
+                // Update active tab button
+                const tabBtns = document.querySelectorAll('.tab-btn');
+                tabBtns.forEach(btn => {
+                    if (btn.getAttribute('data-tab') === tabName) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                // Update active tab content
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                document.getElementById(`${tabName}-output`).classList.add('active');
+            } catch (err) {
+                console.error("Error switching tabs:", err);
+            }
+        }
+        
+        // Copy dimensions code to clipboard
+        function copyToClipboard() {
+            try {
+                const dimensionsCode = document.getElementById('dimensions-code');
+                const copyBtn = document.getElementById('copy-btn');
+                
+                if (!dimensionsCode || !dimensionsCode.textContent) {
+                    throw new Error("No code to copy");
+                }
+                
+                // Use the newer clipboard API if available
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(dimensionsCode.textContent)
+                        .then(() => {
+                            copyBtn.textContent = "Copied!";
+                            setTimeout(() => {
+                                copyBtn.textContent = "Copy to Clipboard";
+                            }, 2000);
+                            showStatus("Copied to clipboard!");
+                        })
+                        .catch(err => {
+                            console.error('Failed to copy: ', err);
+                            // Fallback to the older method
+                            oldCopyMethod(dimensionsCode.textContent, copyBtn);
+                        });
+                } else {
+                    // Fallback for older browsers
+                    oldCopyMethod(dimensionsCode.textContent, copyBtn);
+                }
+            } catch (err) {
+                console.error("Error copying to clipboard:", err);
+                showStatus("Error copying to clipboard: " + err.message, true);
+            }
+        }
+        
+        // Old clipboard copy method
+        function oldCopyMethod(text, copyBtn) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    copyBtn.textContent = "Copied!";
+                    setTimeout(() => {
+                        copyBtn.textContent = "Copy to Clipboard";
+                    }, 2000);
+                    showStatus("Copied to clipboard!");
+                } else {
+                    throw new Error("Copy command failed");
+                }
+            } catch (err) {
+                console.error('Error during copy operation: ', err);
+                showStatus("Failed to copy to clipboard", true);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        // Generate standalone survey link
+        function generateSurveyLink() {
+            try {
+                // Validate brand name first
+                if (!validateBrandName()) {
+                    return;
+                }
+                
+                if (currentSurvey.questions.length === 0) {
+                    alert("Please generate a survey first.");
+                    return;
+                }
+                
+                // Process the survey to replace placeholders
+                const processedSurvey = {
+                    title: currentSurvey.title,
+                    questions: currentSurvey.questions.map(q => {
+                        const newQ = {...q};
+                        
+                        // Replace placeholders in question text
+                        newQ.text = newQ.text.replace(/\[brand\]/g, brandName)
+                                           .replace(/\[category\]/g, categoryName);
+                        
+                        // Replace placeholders in options if they exist
+                        if (newQ.options) {
+                            newQ.options = newQ.options.map(opt => 
+                                opt.replace(/\[brand\]/g, brandName)
+                                   .replace(/\[category\]/g, categoryName)
+                            );
+                        }
+                        
+                        return newQ;
+                    })
+                };
+                
+                // Create a data URI with the survey HTML
+                const surveyHTML = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>${processedSurvey.title}</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            line-height: 1.6;
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 20px;
+                            background-color: #f9f9f9;
+                        }
+                        
+                        .survey-container {
+                            background-color: white;
+                            border: 1px solid #ddd;
+                            padding: 30px;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        }
+                        
+                        h2 {
+                            color: #2c3e50;
+                            margin-bottom: 20px;
+                        }
+                        
+                        .question-container {
+                            margin-bottom: 30px;
+                            padding-bottom: 20px;
+                            border-bottom: 1px solid #eee;
+                        }
+                        
+                        .question-text {
+                            font-weight: bold;
+                            margin-bottom: 15px;
+                            color: #34495e;
+                        }
+                        
+                        textarea {
+                            width: 100%;
+                            min-height: 100px;
+                            padding: 12px;
+                            border: 1px solid #ddd;
+                            border-radius: 4px;
+                            font-family: inherit;
+                            font-size: 14px;
+                        }
+                        
+                        .radio-option, .checkbox-option {
+                            margin-bottom: 10px;
+                            display: flex;
+                            align-items: center;
+                        }
+                        
+                        .radio-option label, .checkbox-option label {
+                            margin-left: 10px;
+                            font-size: 15px;
+                        }
+                        
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 15px 0;
+                        }
+                        
+                        th, td {
+                            padding: 10px;
+                            text-align: center;
+                            border: 1px solid #ddd;
+                        }
+                        
+                        th {
+                            background-color: #f2f2f2;
+                        }
+                        
+                        .scale-container {
+                            margin-top: 15px;
+                        }
+                        
+                        .scale-labels {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-bottom: 10px;
+                        }
+                        
+                        .scale-options {
+                            display: flex;
+                            justify-content: space-between;
+                        }
+                        
+                        .survey-submit-btn {
+                            padding: 12px 25px;
+                            background-color: #2ecc71;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 16px;
+                            margin-top: 20px;
+                        }
+                        
+                        .survey-submit-btn:hover {
+                            background-color: #27ae60;
+                        }
+                        
+                        .thank-you {
+                            display: none;
+                            text-align: center;
+                            padding: 40px 20px;
+                        }
+                        
+                        .thank-you h2 {
+                            color: #2ecc71;
+                            margin-bottom: 20px;
+                        }
+                        
+                        .section-heading {
+                            background-color: #f5f5f5;
+                            padding: 10px;
+                            margin-bottom: 15px;
+                            border-left: 4px solid #3498db;
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="survey-container" id="survey-form">
+                        ${generateSurveyHTML(processedSurvey)}
+                    </div>
+                    
+                    <div class="thank-you" id="thank-you">
+                        <h2>Thank You!</h2>
+                        <p>Your response has been submitted successfully.</p>
+                        <p>This information will help us improve our products and services.</p>
+                    </div>
+                    
+                    <script>
+                        document.querySelector('.survey-submit-btn').addEventListener('click', function() {
+                            document.getElementById('survey-form').style.display = 'none';
+                             document.getElementById('thank-you').style.display = 'block';
+                            
+                    // In a real system, form data would be submitted to a server here
+                             console.log('Survey submitted');
+                         });
+                    <\\/script>
+                </body>
+                </html>`;
+                
+                const dataURI = 'data:text/html;charset=utf-8,' + encodeURIComponent(surveyHTML);
+                
+                const surveyLinkContainer = document.getElementById('survey-link-container');
+                if (surveyLinkContainer) {
+                    surveyLinkContainer.innerHTML = `
+                        <p>Your survey link is ready! Click below to open the survey in a new tab:</p>
+                        <a href="${dataURI}" target="_blank" class="survey-link">Open Survey</a>
+                        <p style="margin-top: 15px; font-size: 12px;">Note: This is a simulated link. In a real implementation, this would be a hosted survey URL that respondents could access.</p>
+                    `;
+                }
+                
+                showStatus("Survey link generated successfully!");
+            } catch (err) {
+                console.error("Error generating survey link:", err);
+                showStatus("Error generating survey link: " + err.message, true);
+            }
+        }
+        
+        // Generate Dimensions syntax from survey object
+        function generateDimensionsSyntax(survey) {
+            let syntax = `Title "${survey.title}"\n\n`;
+            
+            survey.questions.forEach((question, index) => {
+                const qNum = index + 1;
+                
+                // Handle section headings differently
+                if (question.type === "section") {
+                    syntax += `# ${question.text}\n\n`;
+                    return;
+                }
+                
+                switch(question.type) {
+                    case "text":
+                        syntax += `Q${qNum} "${question.text}"\n`;
+                        syntax += `Open ${question.id}\n\n`;
+                        break;
+                    
+                    case "single":
+                        syntax += `Q${qNum} "${question.text}"\n`;
+                        syntax += `Single ${question.id}\n`;
+                        question.options.forEach((option, i) => {
+                            syntax += `  ${i+1} "${option}"\n`;
+                        });
+                        syntax += "\n";
+                        break;
+                    
+                    case "multiple":
+                        syntax += `Q${qNum} "${question.text}"\n`;
+                        syntax += `Multi ${question.id}\n`;
+                        question.options.forEach((option, i) => {
+                            syntax += `  ${i+1} "${option}"\n`;
+                        });
+                        syntax += "\n";
+                        break;
+                    
+                    case "grid":
+                        syntax += `Q${qNum} "${question.text}"\n`;
+                        syntax += `Grid ${question.id}\n`;
+                        syntax += `Rows\n`;
+                        question.rows.forEach((row, i) => {
+                            syntax += `  ${i+1} "${row}"\n`;
+                        });
+                        syntax += `Columns\n`;
+                        question.columns.forEach((col, i) => {
+                            syntax += `  ${i+1} "${col}"\n`;
+                        });
+                        syntax += "\n";
+                        break;
+                    
+                    case "scale":
+                        syntax += `Q${qNum} "${question.text}"\n`;
+                        syntax += `Scale ${question.id} ${question.min}-${question.max}\n`;
+                        syntax += `  MinLabel "${question.minLabel}"\n`;
+                        syntax += `  MaxLabel "${question.maxLabel}"\n\n`;
+                        break;
+                }
+            });
+            
+            return syntax;
+        }
+        
+        // Generate HTML for survey preview
+        function generateSurveyHTML(survey) {
+            let html = `<div class="survey-container">
+                <h2>${survey.title}</h2>
+                <p>Thank you for participating in this survey. Your feedback is valuable to us.</p>`;
+            
+            // Add section headings and keep track of question numbers
+            let questionNumber = 1;
+            
+            survey.questions.forEach((question, index) => {
+                // Handle section headings differently
+                if (question.type === "section") {
+                    html += `<div class="section-heading">${question.text}</div>`;
+                    return; // Don't increment question number for sections
+                }
+                
+                const qNum = questionNumber++;
+                
+                html += `<div class="question-container">
+                    <p class="question-text">${qNum}. ${question.text}</p>`;
+                
+                switch(question.type) {
+                    case "text":
+                        html += `<textarea class="survey-textarea" placeholder="Enter your answer here..."></textarea>`;
+                        break;
+                    
+                    case "single":
+                        question.options.forEach((option, i) => {
+                            html += `
+                            <div class="radio-option">
+                                <input type="radio" id="${question.id}_${i}" name="${question.id}" value="${option}">
+                                <label for="${question.id}_${i}">${option}</label>
+                            </div>`;
+                        });
+                        break;
+                    
+                    case "multiple":
+                        question.options.forEach((option, i) => {
+                            html += `
+                            <div class="checkbox-option">
+                                <input type="checkbox" id="${question.id}_${i}" name="${question.id}" value="${option}">
+                                <label for="${question.id}_${i}">${option}</label>
+                            </div>`;
+                        });
+                        break;
+                    
+                    case "grid":
+                        html += `<table class="grid-table">
+                            <tr>
+                                <th></th>`;
+                        
+                        question.columns.forEach(col => {
+                            html += `<th>${col}</th>`;
+                        });
+                        
+                        html += `</tr>`;
+                        
+                        question.rows.forEach((row, r) => {
+                            html += `<tr>
+                                <td>${row}</td>`;
+                            
+                            question.columns.forEach((col, c) => {
+                                html += `<td>
+                                    <input type="radio" id="${question.id}_${r}_${c}" name="${question.id}_${r}" value="${col}">
+                                </td>`;
+                            });
+                            
+                            html += `</tr>`;
+                        });
+                        
+                        html += `</table>`;
+                        break;
+                    
+                    case "scale":
+                        html += `<div class="scale-container">
+                            <div class="scale-labels">
+                                <span>${question.minLabel}</span>
+                                <span>${question.maxLabel}</span>
+                            </div>
+                            <div class="scale-options">`;
+                        
+                        for (let i = question.min; i <= question.max; i++) {
+                            html += `
+                                <div class="scale-option">
+                                    <input type="radio" id="${question.id}_${i}" name="${question.id}" value="${i}">
+                                    <label for="${question.id}_${i}">${i}</label>
+                                </div>`;
+                        }
+                        
+                        html += `</div></div>`;
+                        break;
+                }
+                
+                html += `</div>`;
+            });
+            
+            html += `<button class="survey-submit-btn">Submit Survey</button>
+            </div>`;
+            
+            return html;
+        }
+        
+        // Update preview and dimensions syntax outputs
+        function updateOutputs() {
+            try {
+                // Replace placeholders with actual brand and category
+                const processedSurvey = {
+                    title: currentSurvey.title,
+                    questions: currentSurvey.questions.map(q => {
+                        const newQ = {...q};
+                        
+                        // Don't process section headings
+                        if (newQ.type === "section") return newQ;
+                        
+                        // Replace placeholders in question text
+                        newQ.text = newQ.text.replace(/\[brand\]/g, brandName)
+                                           .replace(/\[category\]/g, categoryName);
+                        
+                        // Replace placeholders in options if they exist
+                        if (newQ.options) {
+                            newQ.options = newQ.options.map(opt => 
+                                opt.replace(/\[brand\]/g, brandName)
+                                   .replace(/\[category\]/g, categoryName)
+                            );
+                        }
+                        
+                        return newQ;
+                    })
+                };
+                
+                // Update Dimensions Syntax
+                const dimensionsCode = document.getElementById('dimensions-code');
+                if (dimensionsCode) {
+                    dimensionsCode.textContent = generateDimensionsSyntax(processedSurvey);
+                }
+                
+                // Update Survey Preview
+                const surveyPreview = document.getElementById('survey-preview');
+                if (surveyPreview) {
+                    surveyPreview.innerHTML = generateSurveyHTML(processedSurvey);
+                    
+                    // Add event listener to preview submit button
+                    const submitBtn = surveyPreview.querySelector('.survey-submit-btn');
+                    if (submitBtn) {
+                        submitBtn.addEventListener('click', () => {
+                            alert('Thank you for completing the survey! In a real implementation, this data would be saved.');
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error("Error updating outputs:", err);
+                showStatus("Error updating outputs: " + err.message, true);
+            }
+        }
+        
+        // Initialize the application when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded");
+            
+            // Add event listeners to buttons
+            document.getElementById('generate-btn').addEventListener('click', generateSurvey);
+            document.getElementById('clear-btn').addEventListener('click', clearAll);
+            document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
+            document.getElementById('survey-link-btn').addEventListener('click', generateSurveyLink);
+            
+            // Add tab switcher events
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    switchTab(this.getAttribute('data-tab'));
+                });
+            });
+            
+            // Add template button events
+            const templateBtns = document.querySelectorAll('.template-btn');
+            templateBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    applyTemplate(this.getAttribute('data-template'));
+                });
+            });
+            
+            // Input change events
+            document.getElementById('brand-name').addEventListener('input', updateBrandName);
+            document.getElementById('category-name').addEventListener('input', updateCategoryName);
+            
+            // Create full template
+            templates.full = {
+                name: "Complete Brand Tracker",
+                questions: []
+            };
+            
+            // Add all questions to full template
+            Object.keys(templates).forEach(key => {
+                if (key !== 'full') {
+                    templates.full.questions = templates.full.questions.concat(
+                        JSON.parse(JSON.stringify(templates[key].questions))
+                    );
+                }
+            });
+            
+            // Show initial prompt to enter brand name
+            setTimeout(() => {
+                showStatus("Please enter your brand name to get started", false);
+            }, 500);
+            
+            console.log("Application initialized successfully!");
+        });
+    </script>
+</body>
+</html>
